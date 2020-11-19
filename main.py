@@ -6,7 +6,7 @@ connect('hotel_t1')
 cfonts.say("WELCOME TO HOTEL CALIFORNIA", font='chrome', colors=['candy', 'candy', 'candy'], align='center', space=True)
 
 def guest():
-    create('guest', "'fname', 'lname', 'phone', 'email', 'address', 'adults', 'child', 'stay', 'room_no'")
+    create('guest_t2', "'fname', 'lname', 'phone', 'email', 'address', 'adults', 'child', 'stay', 'room_no'")
     check_room()
     #personal info
     fname=input("First Name:  ")
@@ -21,8 +21,8 @@ def guest():
     stay=input("Number of Days of stay:  ")
     #room
     room_no=input("Enter the room number to reserve:  ")
-    '''data="'"+lname+"'"+"'"+phone+"'"+"'"+email+"', '"+address+"', "+adults+", "+", "+child+", "+stay+", "+room_no
-    insert("guest", data)'''
+    data="'"+fname+"', '"+lname+"', "+phone+", '"+email+"', '"+address+"', "+adults+", "+child+", "+stay+", "+room_no
+    insert("guest_t2", data)
     upd_cond="room_no="+room_no
     update("rooms", "status='R'", upd_cond)
 
