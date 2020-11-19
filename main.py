@@ -6,7 +6,7 @@ dbc.connect('hotel_t1')
 cfonts.say("WELCOME TO HOTEL CALIFORNIA", font='chrome', colors=['candy', 'candy', 'candy'], align='center', space=True)
 
 def guest():
-    dbc.create('guest', "'fname', 'lname', 'phone', 'email', 'address', 'adults', 'child', 'stay', 'room_no'")
+    dbc.create('guest_t2', "'fname', 'lname', 'phone', 'email', 'address', 'adults', 'child', 'stay', 'room_no'")
     check_room()
     # personal info
     fname = input("First Name:  ")
