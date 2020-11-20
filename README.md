@@ -1,6 +1,10 @@
 # HotelManagement
-School Project. Work In Progression (Actually work is yet to be started and infact there is no progression)
+School Project.
+
+Work In Progression.
 
 I am noob.
 
-And you are just wasting your time right now by reading this and so did I by writing this.
+But [@Mastermind-sap](https://github.com/Mastermind-sap) and [@JDeepD](https://github.com/JDeepD) aren't.
+
+##### Special Thanks to [@Mastermind-sap](https://github.com/Mastermind-sap) and [@JDeepD](https://github.com/JDeepD).
