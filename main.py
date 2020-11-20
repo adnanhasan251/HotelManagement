@@ -2,6 +2,7 @@ from __future__ import print_function, absolute_import, with_statement
 
 import cfonts
 import db_connect as dbc
+from tabulate import tabulate
 
 dbc.connect('hotel_t1')
 
@@ -21,7 +22,9 @@ def guest():
             break
         else:
             print("Invalid phone number")
-            
+
+ 
+
     while True:
         email = input("Email:  ")
         if "@" in email:
@@ -32,7 +35,10 @@ def guest():
                 print("Invalid email")
         else:
             print("Invalid email")
+
+
             
+
     address = input("Guest's Address:  ")
     # reservation info
     adults = input("Number of Adults:  ")
@@ -42,7 +48,27 @@ def guest():
     room_no = input("Enter the room number to reserve:  ")
     upd_cond = "room_no="+room_no
     dbc.update("rooms", "status='R'", upd_cond)
-    y_n = input("Do you want to continue ? [y/n]")
+
+    chosen = [
+                ["First name", fname],
+                ["Last name", lname],
+                ["Phone no", phone],
+                ["Email ID", email],
+                ["Address", address],
+                ["No. of Adults", adults],
+                ["No. of children", child],
+                ["No. of days", stay],
+                ["Room Number", room_no],
+
+             ]
+
+    print("\n\n*********** Invoice ************\n\n")
+    print(tabulate(chosen, tablefmt="fancy_grid"))
+    con_trans = input("Do you want to confirm transaction ? [y/n]")
+    if con_trans in ["y", "Y", "Yes", "YES"]:
+        print("\n\nTransaction Successful\n\n")
+
+    y_n = input("\nDo you want to book another room ? [y/n]\n")
     if y_n in ["n", "N", "No"]:
         print("Thank you")
         global flag
