@@ -23,6 +23,8 @@ def guest():
         else:
             print("Invalid phone number")
 
+ 
+
     while True:
         email = input("Email:  ")
         if "@" in email:
@@ -33,6 +35,9 @@ def guest():
                 print("Invalid email")
         else:
             print("Invalid email")
+
+
+            
 
     address = input("Guest's Address:  ")
     # reservation info
