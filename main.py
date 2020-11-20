@@ -14,8 +14,25 @@ def guest():
     fname = input("First Name:  ")
     lname = input("Last Name:  ")
     # contact
-    phone = input("Phone Number:  ")
-    email = input("Email:  ")
+    while True:
+        phone = input("Phone Number:  ")
+        if (phone.isnumeric()) and (8<len(phone)<12) and (" " not in phone) and (phone.startswith("09") or phone.startswith("07") or phone.startswith("91")):
+        #if all( [phone.isnumeric(), 8<len(phone.strip())<=12, phone.startswith( ("09","07" ,"91") ) ] ) :
+            break
+        else:
+            print("Invalid phone number")
+            
+    while True:
+        email = input("Email:  ")
+        if "@" in email:
+            a=email.partition("@")
+            if len(a[0])!=0 and len(a[2])!=0 and "@" not in a[0] and "@" not in a[2]:
+                break
+            else:
+                print("Invalid email")
+        else:
+            print("Invalid email")
+            
     address = input("Guest's Address:  ")
     # reservation info
     adults = input("Number of Adults:  ")
