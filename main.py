@@ -38,12 +38,31 @@ def guest():
 
 
             
-
-    address = input("Guest's Address:  ")
+    while True:
+        address = input("Guest's Address:  ")
+        if address.isalnum() and len(address)!=0:
+            break
+        else:
+            print("Invalid")
     # reservation info
-    adults = input("Number of Adults:  ")
-    child = input("Number of Children:  ")
-    stay = input("Number of Days of stay:  ")
+    while True:
+        adults = input("Number of Adults:  ")
+        if int(adults)>=0 and adults.isnumeric():
+            break
+        else:
+            print("Invalid number")
+    while True:
+        child = input("Number of Children:  ")
+        if int(child)>=0 and child.isnumeric():
+            break
+        else:
+            print("Invalid number")
+    while True:
+        stay = input("Number of Days of stay:  ")
+        if int(stay)>=0 and stay.isnumeric():
+            break
+        else:
+            print("Invalid number")
     # room
     room_no = input("Enter the room number to reserve:  ")
     upd_cond = "room_no="+room_no
