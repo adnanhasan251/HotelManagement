@@ -13,6 +13,7 @@ def insert(tname, data):
     dbconn.commit()
 def update(tname, uinfo, condition):
     cursor.execute("UPDATE "+tname+" SET "+uinfo+" WHERE "+condition)
+    dbconn.commit()
     # could also use:
     # cursor.execute(f"UPDATE {tname} SET {uinfo} where {condition}")
 
