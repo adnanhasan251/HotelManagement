@@ -30,12 +30,6 @@ def seetable(tname):
     tablecontent = cursor.fetchall()
     return tablecontent
 
-
-
-'''connect('test11')
-create('tabletest', 'fname, lname, phone')
-insert("tabletest", "'adnan', 'hasan', 12345")
-insert("tabletest", "'test1', 'test2', 123456")
-update('tabletest', "lname='HASAN'", "fname='adnan'")
-print(seetable('tabletest'))
-print(get("tabletest", "fname", "lname='test2'"))'''
+def delt(tname, cond):
+    cursor.execute("DELETE FROM "+tname+" WHERE "+cond)
+    dbconn.commit()
