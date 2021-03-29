@@ -222,7 +222,7 @@ def room_status():
 
 
 def rate():
-    rate=dbc.seetable("rooms")
+    rate=dbc.seetable("rate")
     rate_=pd.DataFrame(rate, columns=['Item', 'Rate per day'])
     print(rate_)
 
