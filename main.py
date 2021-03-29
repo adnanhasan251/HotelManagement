@@ -1,5 +1,5 @@
 from __future__ import print_function, absolute_import, with_statement
-
+import pandas as pd
 import cfonts
 import db_connect as dbc
 from tabulate import tabulate
@@ -9,16 +9,15 @@ dbc.connect('hotel_t1')
 cfonts.say("WELCOME TO HOTEL CALIFORNIA", font='chrome', colors=['candy', 'candy', 'candy'], align='center', space=True)
 
 def guest():
-    dbc.create('guest_t2', "'fname', 'lname', 'phone', 'email', 'address', 'adults', 'child', 'stay', 'room_no'")
-    check_room()
+    dbc.create('guest_t2', "'fname', 'lname', 'phone', 'email', 'address', 'adults', 'child', 'stay', 'room_no', 'wifi'")
+    #check_room()
     # personal info
     fname = input("First Name:  ")
     lname = input("Last Name:  ")
     # contact
     while True:
         phone = input("Phone Number:  ")
-        if (phone.isnumeric()) and (8<len(phone)<12) and (" " not in phone) and (phone.startswith("09") or phone.startswith("07") or phone.startswith("91")):
-        #if all( [phone.isnumeric(), 8<len(phone.strip())<=12, phone.startswith( ("09","07" ,"91") ) ] ) :
+        if (phone.isnumeric()) and (8<len(phone)<13) and (" " not in phone) and (phone.startswith("9") or phone.startswith("7")  or phone.startswith("8") or phone.startswith("91")):
             break
         else:
             print("Invalid phone number")
@@ -63,8 +62,13 @@ def guest():
             break
         else:
             print("Invalid number")
+    wifi=input("Wifi access required (y/n):  ").upper()
     # room
     room_no = input("Enter the room number to reserve:  ")
+    #insert guest details in database
+    data="'"+fname+"', '"+lname+"', "+phone+", '"+email+"', '"+address+"', "+adults+", "+child+", "+stay+", "+room_no+", '"+wifi+"'"
+    dbc.insert("guest_t2", data)
+    #update room status
     upd_cond = "room_no="+room_no
     dbc.update("rooms", "status='R'", upd_cond)
 
@@ -81,11 +85,11 @@ def guest():
 
              ]
 
-    print("\n\n*********** Invoice ************\n\n")
+    print("\n\n***********  ROOM ALLOTMENT ************\n\n")
     print(tabulate(chosen, tablefmt="fancy_grid"))
-    con_trans = input("Do you want to confirm transaction ? [y/n]")
+    con_trans = input("Do you want to confirm reservation ? [y/n]")
     if con_trans in ["y", "Y", "Yes", "YES"]:
-        print("\n\nTransaction Successful\n\n")
+        print("\n\nReservation Successful\n\n")
 
     y_n = input("\nDo you want to book another room ? [y/n]\n")
     if y_n in ["n", "N", "No"]:
@@ -97,13 +101,182 @@ def check_room():
     beds = input("Number of beds:  ")
     ac = input("AC required (y/n):  ").upper()
     tv = input("TV required (y/n):  ").upper()
-    wifi = input("WIFI required (y/n):  ").upper()
-    _filter = "beds="+beds+" AND ac="+"'"+ac+"'"+" AND tv="+"'"+tv+"'"
+    _filter = "beds="+beds+" AND ac="+"'"+ac+"'"+" AND tv="+"'"+tv+"'"+" AND status='NR'"
     available = dbc.get("rooms", "room_no", _filter)
     print("ROOMS AVAILABLE:")
     for Number in available:
         print(Number[0])
+    print("Please select an option:")
+    print("1. Reserve a room")
+    print("2. Check another room")
+    opt=int(input("(1/2):  "))
+    if opt==1:
+        guest()
+    elif opt==2:
+        check_room()
+
+def check_out():
+    roomno=input("Enter the room number to check out:  ")
+    stay=int(input("Days stayed?:  "))
+    dat="fname, lname, phone, room_no, wifi"
+    _filter="room_no="+roomno
+    roominf=dbc.get("guest_t2",dat,_filter)
+    print(roominf)
+    fname=roominf[0][0]
+    lname=roominf[0][1]
+    phone=roominf[0][2]
+    wifi=roominf[0][4]
+    wifi="Y"
+    dat2="beds, ac, tv"
+    facility=dbc.get("rooms", dat2, _filter)
+    beds=facility[0][0]
+    ac=facility[0][1]
+    tv=facility[0][2]
+
+
+    item1="'"+ str(beds)+"r" +"'"
+    _filter3="item="+item1
+    r_1=dbc.get("rate", "rpd", _filter3)[0][0]
+
+    if ac=="Y":
+        item2="'ac'"
+        _filter4="item="+item2
+        r_2=dbc.get("rate", "rpd", _filter4)[0][0]
+    else:
+        r_2=0
+    
+    if tv=="Y":
+        item3="'tv'"
+        _filter5="item="+item3
+        r_3=dbc.get("rate", "rpd", _filter5)[0][0]
+    else:
+        r_3=0
+    
+    if wifi=="Y":
+        item4="'ac'"
+        _filter6="item="+item4
+        r_4=dbc.get("rate", "rpd", _filter6)[0][0]
+    else:
+        r_4=0
+
+    total=(r_1+r_2+r_3+r_4)*stay
+
+    inv = [
+                ["First name", fname],
+                ["Last name", lname],
+                ["Phone no", phone],
+                ["No. of days", stay],
+                ["Room", "Rs."+r_1],
+                ["TV", "Rs."+r_3],
+                ["AC", "Rs."+r_2],
+                ["Wifi", "Rs."+r_4],
+                ["Total ", "Rs."+total],
+                ["Room Number", roomno],
+
+             ]
+
+    co=input("Do you want to check out? (y/n)")
+    if co.lower()=="y":
+        #BILL
+        print("\n\n***********  INVOICE ************\n\n")
+        print(tabulate(inv, tablefmt="fancy_grid"))
+        con_trans = input("Do you want to confirm transaction ? [y/n]")
+        if con_trans in ["y", "Y", "Yes", "YES"]:
+            print("\n\nTransaction Successful\n\n")
+
+        y_n = input("\nDo you want to book another room ? [y/n]\n")
+        if y_n in ["n", "N", "No"]:
+            print("Thank you")
+            global flag
+            flag = False
+        cond="room_no="+roomno
+        dbc.delt("guest_t2", cond)
+        upd_cond = "room_no="+roomno
+        dbc.update("rooms", "status='NR'", upd_cond)
+    elif co.lower()=="n":
+        interf()
+
+def room_status():
+    global log
+    rooms=dbc.seetable("rooms")
+    guests=dbc.seetable("guest_t2")
+    room_ = pd.DataFrame(rooms, columns=['Room no', 'Status','No of Beds','AC', 'TV'])
+    guest_= pd.DataFrame(guests, columns=['First name', 'Last name', 'Phone No', 'Email', 'Address', 'No of Adults', 'No of Child', 'Days of Stay', 'Room No', 'Wifi Access'])
+    print("Please select an option:")
+    print("1. See all the room status")
+    print("2. See guests details (admin only)")
+    opt=int(input("Select (1/2):  "))
+    if opt==1:
+        print("ROOMS:")
+        print(room_)
+    elif opt==2:
+        if adm==True:
+            print("GUESTS:")
+            print(guest_)
+        else:
+            print("You need admin priviledge to view the data")
+            opt=input("Do you want to login as admin? (y/n)").lower()
+            if opt=='y':
+                log = False
+                login()
+
+
+def rate():
+    rate=dbc.seetable("rooms")
+    rate_=pd.DataFrame(rate, columns=['Item', 'Rate per day'])
+    print(rate_)
+
+
+def interf():
+    print("Please choose a option:")
+    print("1. Reserve a room")
+    print("2. Check out")
+    print("3. Check all room status")
+    print("4. Check rates")
+    initial_opt=int(input("(1/2/3):  "))
+    if initial_opt==1:
+        check_room()
+    elif initial_opt==2:
+        check_out()
+    elif initial_opt==3:
+        room_status()
+    elif initial_opt==4:
+        rate()
+
+
+log=False
+adm=False
+def login():
+    global log
+    global adm
+    if log==True:
+        interf()
+    else:
+        user=input("Enter username:  ")
+        passwd=input("Enter password:  ")
+        auser=dbc.seetable("cred")[0][0]
+        apass=dbc.seetable("cred")[0][1]
+        suser=dbc.seetable("cred")[1][0]
+        spass=dbc.seetable("cred")[1][1]
+
+
+        #user=staff passwd=qazxsw@hotel@calif
+        if user==suser: 
+            if passwd==spass:
+                log = True
+            else:
+                print("Values do not match the record, try again!")
+        #user=admin passwd=admin@pwd@753
+        elif user==auser:
+            if passwd==apass:
+                log = True
+                adm = True
+            else:
+                print("Values do not match the record, try again!")
+        else:
+            print("Values do not match the record, try again!")
+            log = False
 
 flag = True
 while flag:
-    guest()
+    login()
