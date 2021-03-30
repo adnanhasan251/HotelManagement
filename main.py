@@ -121,12 +121,14 @@ def check_out():
     dat="fname, lname, phone, room_no, wifi"
     _filter="room_no="+roomno
     roominf=dbc.get("guest_t2",dat,_filter)
+    roominf_=pd.DataFrame(roominf, columns=['First Name', 'Last Name', 'Phone', 'Room No','Wifi'])
     print(roominf)
+    print(roominf_)
     fname=roominf[0][0]
     lname=roominf[0][1]
     phone=roominf[0][2]
     wifi=roominf[0][4]
-    wifi="Y"
+
     dat2="beds, ac, tv"
     facility=dbc.get("rooms", dat2, _filter)
     beds=facility[0][0]
@@ -134,7 +136,7 @@ def check_out():
     tv=facility[0][2]
 
 
-    item1="'"+ str(beds)+"r" +"'"
+    item1="'"+ str(beds)+" bed" +"'"
     _filter3="item="+item1
     r_1=dbc.get("rate", "rpd", _filter3)[0][0]
 
@@ -166,11 +168,11 @@ def check_out():
                 ["Last name", lname],
                 ["Phone no", phone],
                 ["No. of days", stay],
-                ["Room", "Rs."+r_1],
-                ["TV", "Rs."+r_3],
-                ["AC", "Rs."+r_2],
-                ["Wifi", "Rs."+r_4],
-                ["Total ", "Rs."+total],
+                ["Room per day", "Rs."+str(r_1)],
+                ["TV per day", "Rs."+str(r_3)],
+                ["AC per day", "Rs."+str(r_2)],
+                ["Wifi per day", "Rs."+str(r_4)],
+                ["Total ", "Rs."+str(total)],
                 ["Room Number", roomno],
 
              ]
@@ -205,7 +207,8 @@ def room_status():
     print("Please select an option:")
     print("1. See all the room status")
     print("2. See guests details (admin only)")
-    opt=int(input("Select (1/2):  "))
+    print("3. Back to Main Menu")
+    opt=int(input("Enter (1/2/3):  "))
     if opt==1:
         print("ROOMS:")
         print(room_)
@@ -219,21 +222,63 @@ def room_status():
             if opt=='y':
                 log = False
                 login()
+    elif opt==3:
+        print("Main Menu:")
+    else:
+        print("Please select from one of the given options!")
+        room_status()
 
 
 def rate():
+    global log
     rate=dbc.seetable("rate")
     rate_=pd.DataFrame(rate, columns=['Item', 'Rate per day'])
     print(rate_)
-
+    opt=input("Do you want to change rates (admin only)? (y/n)").lower()
+    if opt=='y':
+        if adm==True:
+            print('''Which rate do you want to change?
+            1. Charge of 'n' bed per day
+            2. Charge of AC/TV/Wifi per day''')
+            opt2=int(input("Enter (1/2):  "))
+            if opt2==1:
+                nbed=int(input("Enter the number of beds (1/2/3) of which you wish to change rates:  "))
+                item="item='"+str(nbed)+" bed'"
+                crate=dbc.get("rate","rpd", item)[0][0]
+                print("Current rate is Rs."+str(crate))
+                nrate=int(input("Enter the new rate (Rs.):  "))
+                uptr="rpd="+str(nrate)
+                dbc.update('rate', uptr, item)
+                print("The new is set to Rs."+str(nrate))
+            if opt2==2:
+                print('''Please select one of the options:
+                1. TV, 2. AC, 3. Wifi''')
+                opt3=int(input("Enter (1/2/3:  "))
+                items=['tv', 'ac', 'wifi']
+                item="item='"+items[(opt3)-1]+"'"
+                crate=dbc.get("rate","rpd", item)[0][0]
+                print("Current rate is Rs."+str(crate))
+                nrate=int(input("Enter the new rate (Rs.):  "))
+                uptr="rpd="+str(nrate)
+                dbc.update('rate', uptr, item)
+                print("The new is set to Rs."+str(nrate))
+        else:
+                print("You need admin priviledge to change the rates")
+                opt=input("Do you want to login as admin? (y/n)").lower()
+                if opt=='y':
+                    log = False
+                    login()
 
 def interf():
+    global log
+    global adm
     print("Please choose a option:")
     print("1. Reserve a room")
     print("2. Check out")
     print("3. Check all room status")
     print("4. Check rates")
-    initial_opt=int(input("(1/2/3):  "))
+    print("5. Logout")
+    initial_opt=int(input("Enter (1/2/3/4/5):  "))
     if initial_opt==1:
         check_room()
     elif initial_opt==2:
@@ -242,6 +287,11 @@ def interf():
         room_status()
     elif initial_opt==4:
         rate()
+    elif initial_opt==5:
+        log = False
+        adm = False
+    else:
+        print("Please select from one of the given options!")
 
 
 log=False
