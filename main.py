@@ -122,7 +122,6 @@ def check_out():
     _filter="room_no="+roomno
     roominf=dbc.get("guest_t2",dat,_filter)
     roominf_=pd.DataFrame(roominf, columns=['First Name', 'Last Name', 'Phone', 'Room No','Wifi'])
-    print(roominf)
     print(roominf_)
     fname=roominf[0][0]
     lname=roominf[0][1]
