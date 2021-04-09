@@ -2,7 +2,8 @@
 
 School Project.
 
-Work In Progression. It is almost (80-90%) completed, as of March 30, 2021.
+Progression from creator's end is over as of 9th April, 2021.
+One still can, however, help to improve it.
 
 In order to use it, download all the given files, and install all the modules from requirement.txt
 
