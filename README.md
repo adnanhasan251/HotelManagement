@@ -1,7 +1,5 @@
 # HotelManagement
 
-School Project.
-
 Progression from creator's end is over as of 9th April, 2021.
 One still can, however, help to improve it.
 
